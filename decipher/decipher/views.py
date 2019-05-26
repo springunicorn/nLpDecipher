@@ -4,5 +4,5 @@ def button(request):
     return render(request,'home.html')
 
 def output(request):
-    data = 123
+    data = request.POST.get('inputsentence', False);
     return render(request,'home.html',{'data':data})

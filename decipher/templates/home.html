@@ -7,7 +7,11 @@
         </title>
     </head>
     <body>
-        <button onclick="location.href='{% url 'script' %}'">Execute Script</button> <hr>
+        <form method="post" enctype="multipart/form-data" action="/output">
+        {% csrf_token %}
+            Input your sentence: <input type="text" name="inputsentence">
+        </form>
+        <button onclick="location.href='{% url 'script' %}'">Display result</button> <hr>
         {% if data %}
         
         {{data | safe}}
