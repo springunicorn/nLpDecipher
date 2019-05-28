@@ -339,4 +339,4 @@ def run_script():
 
     sentiment = read_files(tarfname)
     cls = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1000)
-    return cls.coef_
+    return cls, sentiment

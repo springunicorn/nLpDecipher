@@ -3,18 +3,34 @@
 <html>
     <head>
         <title>
-            Python button script
+            NLP Decipher
         </title>
     </head>
     <body>
+        <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button> <br>
+        <hr>
+
         <form method="post" enctype="multipart/form-data" action="/output">
         {% csrf_token %}
             Input your sentence: <input type="text" name="inputsentence">
         </form>
-        <button onclick="location.href='{% url 'script' %}'">Display result</button> <hr>
-        {% if data is not None %}
+
+        {% if progress is not None %}
         
+        {{progress}}
+
+        {% endif %}
+
+        {% if data is not None or prediction is not None %}
+        
+        <br>
         {{data}}
+
+        <br>
+        {{prediction}}
+
+        <br>
+        {{reason}}
 
         {% endif %}
 
