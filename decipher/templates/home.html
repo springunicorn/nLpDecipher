@@ -2,22 +2,25 @@
 <!DOCTYPE html>
 <html>
     <head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'decipher/style.css' %}">
         <title>
             NLP Decipher
         </title>
+
     </head>
     <body>
-        <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button> 
+        <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button>
         {% if progress is not None %}
-        
+
         {{progress}}
-        
+
         {% endif %}
         <hr>
 
         <form method="post" enctype="multipart/form-data" action="/output">
         {% csrf_token %}
-            Input your sentence for sentiment classification: 
+            Input your sentence for sentiment classification:
             <input type="text" name="inputsentence">
         </form>
 
@@ -28,7 +31,7 @@
         </form>
 
         {% if data is not None or prediction is not None %}
-        
+
         <br>
         {{data}}
 
@@ -41,7 +44,7 @@
         {% endif %}
 
         {% if confusion is not None %}
-        
+
         <br>
         {{confusion}}
 

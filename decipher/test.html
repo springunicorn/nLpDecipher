@@ -37088,25 +37088,28 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_divZOAR3ORU9X8WN64"></div>
+        <div class="lime top_div" id="top_divGOQDK0ABEG6B6X6"></div>
         
         <script>
-        var top_div = d3.select('#top_divZOAR3ORU9X8WN64').classed('lime top_div', true);
+        var top_div = d3.select('#top_divGOQDK0ABEG6B6X6').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.5587776156993637, 0.4412223843006363]);
+            var pp = new lime.PredictProba(pp_svg, ["brand", "female", "male"], [0.8016352698063629, 0.1983647301936371]);
             
         
         var exp_div;
-            var exp = new lime.Explanation(["NEGATIVE", "POSITIVE"]);
+            var exp = new lime.Explanation(["brand", "female", "male"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["asked", -0.3145586518084089], ["and", 0.18543663261316232], ["burger", 0.16152434613120403], ["no", -0.14995596245902695], ["cold", -0.1438416387145282], ["was", -0.12275516263849574]], 1, exp_div);
+                exp.show([["how", 0.37452579540725517], ["are", 0.03293543757898366], ["you", -0.02281155398080114], ["old", -0.00013627256408108975]], 0, exp_div);
+                
+                exp_div = top_div.append('div').classed('lime explanation', true);
+                exp.show([["how", -0.37452579540725517], ["are", -0.03293543757898371], ["you", 0.022811553980800835], ["old", 0.000136272564081218]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_text([["asked", 96, -0.3145586518084089], ["and", 67, 0.18543663261316232], ["and", 117, 0.18543663261316232], ["burger", 46, 0.16152434613120403], ["no", 106, -0.14995596245902695], ["cold", 88, -0.1438416387145282], ["was", 84, -0.12275516263849574]], 1, "In for lunch with my Father in law.  He had a burger I had the Mac and cheese. Mine was cold he asked for no lettuce and of course", raw_div, true);
+            exp.show_raw_text([["how", 0, 0.37452579540725517], ["are", 8, 0.03293543757898366], ["you", 12, -0.02281155398080114], ["old", 4, -0.00013627256408108975]], 0, "how old are you", raw_div, true);
             
         </script>
         </body></html>
