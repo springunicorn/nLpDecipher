@@ -2,6 +2,10 @@
 import nltk
 import string
 import numpy as np
+from collections import defaultdict
+import nltk
+
+vocab = defaultdict(int)
 
 def read_files(tarfname):
     """Read the training and development data from the sentiment tar file.
@@ -83,11 +87,24 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
         sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, max_features=max_feat)
     else:
         sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize)
-    # sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=LemmaTokenizer())
-    sentiment.trainX = sentiment.count_vect.fit_transform(sentiment.train_data)
-    sentiment.devX = sentiment.count_vect.transform(sentiment.dev_data)
+    
+    sentiment.trainX = sentiment.count_vect.fit_transform(init_vocab(sentiment.train_data))
+    # sentiment.devX = sentiment.count_vect.transform(sentiment.dev_data)
 
     return sentiment
+
+def init_vocab(data):
+    global vocab
+    twd = nltk.tokenize.treebank.TreebankWordDetokenizer()
+    new_data = []
+    for s in data:
+        tmp = nltk.word_tokenize(s)
+        new_tmp = []
+        for t in tmp:
+            n = t if vocab[t] > 1 else 'UNKUNK'
+            new_tmp.append(n)
+        new_data.append(twd.detokenize(new_tmp))
+    return new_data
 
 def read_unlabeled(tarfname, sentiment):
     """Reads the unlabeled data.
@@ -123,6 +140,7 @@ def read_unlabeled(tarfname, sentiment):
     return unlabeled
 
 def read_tsv(tar, fname):
+    global vocab
     member = tar.getmember(fname)
     print(member.name)
     tf = tar.extractfile(member)
@@ -133,6 +151,9 @@ def read_tsv(tar, fname):
         (label,text) = line.strip().split("\t")
         labels.append(label)
         data.append(text)
+        if 'train' in fname:
+            for w in nltk.word_tokenize(text):
+                vocab[w] += 1
     return data, labels
 
 def write_pred_kaggle_file(unlabeled, cls, outfname, sentiment):
