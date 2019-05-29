@@ -22,4 +22,5 @@ urlpatterns = [
     path('', views.button),
     path('train_model', views.train, name='train_model'),
     path('output', views.output, name='script'),
+    path('output2', views.output2, name='script2'),
 ]

@@ -7,19 +7,25 @@
         </title>
     </head>
     <body>
-        <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button> <br>
+        <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button> 
+        {% if progress is not None %}
+        
+        {{progress}}
+        
+        {% endif %}
         <hr>
 
         <form method="post" enctype="multipart/form-data" action="/output">
         {% csrf_token %}
-            Input your sentence: <input type="text" name="inputsentence">
+            Input your sentence for sentiment classification: 
+            <input type="text" name="inputsentence">
         </form>
 
-        {% if progress is not None %}
-        
-        {{progress}}
-
-        {% endif %}
+        <form method="post" enctype="multipart/form-data" action="/output2">
+            {% csrf_token %}
+            Input your sentence for gender classification:
+            <input type="text" name="inputsentence2">
+        </form>
 
         {% if data is not None or prediction is not None %}
         

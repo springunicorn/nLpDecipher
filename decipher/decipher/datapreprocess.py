@@ -43,3 +43,14 @@ train.to_csv('./sentiment/train.tsv', sep='\t', index=False,
 #%%
 validate.to_csv('./sentiment/dev.tsv', sep='\t', index=False,
              header=False, encoding='utf-8')
+
+
+#%%
+test.to_csv('./sentiment/key.tsv', sep='\t', index=False,
+            header=False, encoding='utf-8')
+test = test['text']
+test.to_csv('./sentiment/test.tsv', sep='\t', index=False,
+            header=False, encoding='utf-8')
+
+
+#%%

@@ -54,6 +54,8 @@ def read_files(tarfname):
     sentiment.le = preprocessing.LabelEncoder()
     sentiment.le.fit(sentiment.train_labels)
     sentiment.target_labels = sentiment.le.classes_
+    le_name_mapping = dict(zip(sentiment.le.classes_, sentiment.le.transform(sentiment.le.classes_)))
+    print(le_name_mapping)
     sentiment.trainy = sentiment.le.transform(sentiment.train_labels)
     sentiment.devy = sentiment.le.transform(sentiment.dev_labels)
     tar.close()
