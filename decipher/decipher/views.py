@@ -39,8 +39,7 @@ def output(request):
     # Tfidf of input sentence
     X = sent.count_vect.transform([rdata])
     # POSITIVE: 1; NEGATIVE: 0
-    prediction = str(cls.predict(X)[0])
-    #prediction = 'POSITIVE' if cls.predict(X)[0] == 1 else 'NEGATIVE'
+    prediction = 'POSITIVE' if cls.predict(X)[0] == 1 else 'NEGATIVE'
 
     tmp = X.toarray()[0]
     # model weights from LogisticRegression
@@ -64,7 +63,7 @@ def output(request):
     prediction = "The prediction is: " +  prediction
     reason = "The reason is: your input contains words " + reason + \
         ", which has a major impact on the prediction"
-        
+    
     if 'unkunk' in reason:
         confusion = "Since the input sentence contains \
             a list of rare words {}, we are not confident to give this\
