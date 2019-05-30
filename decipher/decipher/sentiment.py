@@ -27,11 +27,14 @@ def read_files(tarfname):
     tar = tarfile.open(tarfname, "r:gz")
     trainname = "train.tsv"
     devname = "dev.tsv"
+    testname = "test.tsv"
     for member in tar.getmembers():
         if 'train.tsv' in member.name:
             trainname = member.name
         elif 'dev.tsv' in member.name:
             devname = member.name
+        elif 'test.tsv' in member.name:
+            testname = member.name
             
             
     class Data: pass
@@ -43,6 +46,11 @@ def read_files(tarfname):
     print("-- dev data")
     sentiment.dev_data, sentiment.dev_labels = read_tsv(tar, devname)
     print(len(sentiment.dev_data))
+
+    print("-- test data")
+    sentiment.test_data, sentiment.test_labels = read_tsv(tar, testname)
+    print(len(sentiment.test_data))
+    
     print("-- transforming data and labels")
 
     # tokens = []
@@ -58,10 +66,11 @@ def read_files(tarfname):
     sentiment.le = preprocessing.LabelEncoder()
     sentiment.le.fit(sentiment.train_labels)
     sentiment.target_labels = sentiment.le.classes_
-    le_name_mapping = dict(zip(sentiment.le.classes_, sentiment.le.transform(sentiment.le.classes_)))
-    print(le_name_mapping)
+    # le_name_mapping = dict(zip(sentiment.le.classes_, sentiment.le.transform(sentiment.le.classes_)))
+    # print(le_name_mapping)
     sentiment.trainy = sentiment.le.transform(sentiment.train_labels)
     sentiment.devy = sentiment.le.transform(sentiment.dev_labels)
+    sentiment.testy = sentiment.le.transform(sentiment.test_labels)
     tar.close()
     return sentiment
 
@@ -92,6 +101,7 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
     
     sentiment.trainX = sentiment.count_vect.fit_transform(init_vocab(sentiment.train_data))
     # sentiment.devX = sentiment.count_vect.transform(sentiment.dev_data)
+    sentiment.testX = sentiment.count_vect.transform(sentiment.test_data)
 
     return sentiment
 
@@ -363,3 +373,14 @@ def run_script():
     sentiment = read_files(tarfname)
     cls = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1000)
     return cls, sentiment
+
+def run_test(cls, sentiment):
+    evaluate(sentiment.testX, sentiment.testy, cls)
+
+
+def evaluate(X, yt, cls, name='data'):
+    """Evaluated a classifier on the given labeled data using accuracy."""
+    from sklearn import metrics
+    yp = cls.predict(X)
+    acc = metrics.accuracy_score(yt, yp)
+    print("  Accuracy on %s  is: %s" % (name, acc))

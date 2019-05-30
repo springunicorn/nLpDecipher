@@ -11,6 +11,7 @@ sent = None
 def train(request):
     global cls, sent
     cls, sent = sentiment.run_script()
+    sentiment.run_test(cls, sent)
     progress = 'Training Done'
     return render(request,'home.html',{'progress':progress})
 
