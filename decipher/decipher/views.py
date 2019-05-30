@@ -4,13 +4,16 @@ import numpy as np
 import lime
 from lime.lime_text import LimeTextExplainer
 import nltk
+import matplotlib.pyplot as plt
+import random
 
-cls = None
+cls1 = None
+cls2 = None
 sent = None
 
 def train(request):
-    global cls, sent
-    cls, sent = sentiment.run_script()
+    global cls1, cls2, sent
+    cls1, cls2, sent = sentiment.run_script()
     progress = 'Training Done'
     return render(request,'home.html',{'progress':progress})
 
@@ -18,7 +21,7 @@ def button(request):
     return render(request,'home.html')
 
 def output(request):
-    global cls, sent
+    global cls1, cls2, sent
     twd = nltk.tokenize.treebank.TreebankWordDetokenizer()
     # get the input sentence from input box
     data = request.POST.get('inputsentence', False).lower()
@@ -28,8 +31,12 @@ def output(request):
     tmp = []
     for x in tmp_data:
         if x not in sent.count_vect.vocabulary_:
-            tmp.append('unkunk')
-            rare_words.append(x)
+            choice = random.random()
+            if choice < 0.5:
+                tmp.append('unkunk')
+                rare_words.append(x)
+            else:
+                tmp.append(x)
         else:
             tmp.append(x)
     rdata = twd.detokenize(tmp)
@@ -39,15 +46,22 @@ def output(request):
     # Tfidf of input sentence
     X = sent.count_vect.transform([rdata])
     # POSITIVE: 1; NEGATIVE: 0
-    prediction = 'POSITIVE' if cls.predict(X)[0] == 1 else 'NEGATIVE'
+    prediction = 'POSITIVE' if cls2.predict(X)[0] == 1 else 'NEGATIVE'
 
     test_s = X.toarray()[0]
+
+    # L1-norm weights
+    sentiment.graph(cls1,test_s,X,vocab,'l1.jpg','L1-norm weights')
+
     # model weights from LogisticRegression
-    coef = cls.coef_
+    coef = cls2.coef_
     # wi*xi
     wixi = [test_s[i]*coef[0][i] for i in range(len(test_s))]
     # argsort wi*xi
     reasons = np.argsort(wixi)
+
+    # L2-norm weights
+    sentiment.graph(cls2,test_s,X,vocab,'l2.jpg','L2-norm weights')
 
     if prediction == 'POSITIVE':
         if wixi[reasons[-2]] != 0:
@@ -76,7 +90,7 @@ def output(request):
     Need to combine the image to our website
     '''
     from sklearn.pipeline import make_pipeline
-    c = make_pipeline(sent.count_vect, cls)
+    c = make_pipeline(sent.count_vect, cls2)
     explainer = LimeTextExplainer(class_names=['NEGATIVE','POSITIVE'])
     exp = explainer.explain_instance(rdata, c.predict_proba, num_features=len(rdata.split(' ')))
     exp.save_to_file('test.html')

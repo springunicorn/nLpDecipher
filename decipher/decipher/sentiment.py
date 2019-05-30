@@ -361,5 +361,32 @@ def run_script():
     tarfname = "decipher/data/sentiment.tar.gz"
 
     sentiment = read_files(tarfname)
-    cls = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1000)
-    return cls, sentiment
+    cls1 = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1000, 'l1', 'liblinear', 10000)
+    cls2 = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1000, 'l2', 'lbfgs', 10000)
+    return cls1, cls2, sentiment
+
+def graph(cls,test_s,X,vocab,fname,title):
+    '''
+    L1/L2 norm wi*xi graph
+    '''
+    import matplotlib.pyplot as plt
+    L_wts = []
+    for i,d in enumerate(cls.coef_[0]):
+        if d*test_s[i] != 0:
+            L_wts.append((vocab[i],d*test_s[i]))
+    if cls.predict(X)[0] == 0:
+        sort_L_wts = sorted(L_wts,key=lambda x:x[1])[:8]
+    else:
+        sort_L_wts = sorted(L_wts,key=lambda x:x[1],reverse=True)[:8]
+    cols = []
+    for (_,x) in sort_L_wts:
+        cols.append('b' if x >= 0 else 'r')
+    plt.bar([i for (i,x) in sort_L_wts],[x for (i,x) in sort_L_wts],\
+        color=cols)
+    plt.xticks(rotation=45)
+    plt.xlabel('impactful feature words')
+    plt.ylabel('contribution of the word when predicting')
+    plt.title(title)
+    plt.subplots_adjust(bottom=0.3)
+    plt.savefig(fname)
+    plt.close()
