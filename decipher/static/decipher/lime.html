@@ -37088,25 +37088,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_divN5VMRY7CLKYMBRF"></div>
+        <div class="lime top_div" id="top_divLAV5Y8CUW58O7O0"></div>
         
         <script>
-        var top_div = d3.select('#top_divN5VMRY7CLKYMBRF').classed('lime top_div', true);
+        var top_div = d3.select('#top_divLAV5Y8CUW58O7O0').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.23661073942516475, 0.7633892605748352]);
+            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.8016352698063629, 0.1983647301936371]);
             
         
         var exp_div;
             var exp = new lime.Explanation(["NEGATIVE", "POSITIVE"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["good", 0.34046861147139773], ["this", -0.21128318372382396], ["place", -0.1798768853941392], ["is", 0.09523537729678509], ["lol", 0.030402566190328394]], 1, exp_div);
+                exp.show([["how", -0.3696273655706857], ["are", -0.03226864780899553], ["you", 0.021874642158825557], ["old", 0.001973576931847605]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_text([["good", 14, 0.34046861147139773], ["this", 0, -0.21128318372382396], ["place", 5, -0.1798768853941392], ["is", 11, 0.09523537729678509], ["lol", 19, 0.030402566190328394]], 1, "this place is good lol", raw_div, true);
+            exp.show_raw_text([["how", 0, -0.3696273655706857], ["are", 8, -0.03226864780899553], ["you", 12, 0.021874642158825557], ["old", 4, 0.001973576931847605]], 1, "how old are you", raw_div, true);
             
         </script>
         </body></html>

@@ -7,15 +7,22 @@
         <title>
             NLP Decipher
         </title>
-
+        <script src="{% static 'decipher/jquery-3.4.1.js' %}"></script>
+        <script>
+        $(function(){
+          $("#lime").load("{% static 'decipher/lime.html' %}");
+        });
+        </script>
     </head>
     <body>
+        <img class= "topbanner" src="{% static 'decipher/computer.png' %}">
+        <div class="main">
         <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button>
+        <div class="progress">
         {% if progress is not None %}
-
         {{progress}}
-
         {% endif %}
+        </div>
         <hr>
 
         <form method="post" enctype="multipart/form-data" action="/output">
@@ -31,24 +38,21 @@
         </form>
 
         {% if data is not None or prediction is not None %}
-
         <br>
         {{data}}
-
         <br>
         {{prediction}}
-
         <br>
         {{reason}}
-
+        <div id="lime"></div>
         {% endif %}
 
         {% if confusion is not None %}
-
         <br>
         {{confusion}}
-
         {% endif %}
-
+        <img src="{% static 'decipher/sigmoid.png' %}" class="sigmoid">
+        </div>
         </body>
+
 </html>
