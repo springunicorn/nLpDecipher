@@ -1,4 +1,5 @@
 #%%
+import sys
 import pandas as pd
 
 df = pd.read_csv(
@@ -46,9 +47,6 @@ validate.to_csv('./sentiment/dev.tsv', sep='\t', index=False,
 
 
 #%%
-test.to_csv('./sentiment/key.tsv', sep='\t', index=False,
-            header=False, encoding='utf-8')
-test = test['text']
 test.to_csv('./sentiment/test.tsv', sep='\t', index=False,
             header=False, encoding='utf-8')
 

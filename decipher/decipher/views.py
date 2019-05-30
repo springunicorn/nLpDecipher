@@ -14,6 +14,7 @@ sent = None
 def train(request):
     global cls1, cls2, sent
     cls1, cls2, sent = sentiment.run_script()
+    sentiment.run_test(cls2, sent)
     progress = 'Training Done'
     return render(request,'home.html',{'progress':progress})
 
@@ -77,7 +78,7 @@ def output(request):
     prediction = "The prediction is: " +  prediction
     reason = "The reason is: your input contains words " + reason + \
         ", which have a major impacts on the prediction"
-    
+
     if 'unkunk' in reason:
         confusion = "Since the input sentence contains \
             a list of rare words {}, we are not confident to give this\
@@ -93,7 +94,7 @@ def output(request):
     c = make_pipeline(sent.count_vect, cls2)
     explainer = LimeTextExplainer(class_names=['NEGATIVE','POSITIVE'])
     exp = explainer.explain_instance(rdata, c.predict_proba, num_features=len(rdata.split(' ')))
-    exp.save_to_file('test.html')
+    exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data
     return render(request,'home.html',\
@@ -134,9 +135,8 @@ def output2(request):
     c = make_pipeline(sent.count_vect, cls)
     explainer = LimeTextExplainer(class_names=['brand', 'female', 'male'])
     exp = explainer.explain_instance(data, c.predict_proba, num_features=6, top_labels=3)
-    exp.save_to_file('test.html')
+    exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data
     return render(request, 'home.html',
                   {'data': data, 'prediction': prediction, 'reason': reason})
-    
