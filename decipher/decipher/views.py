@@ -40,14 +40,13 @@ def output(request):
     # Tfidf of input sentence
     X = sent.count_vect.transform([rdata])
     # POSITIVE: 1; NEGATIVE: 0
-    prediction = str(cls.predict(X)[0])
-    #prediction = 'POSITIVE' if cls.predict(X)[0] == 1 else 'NEGATIVE'
+    prediction = 'POSITIVE' if cls.predict(X)[0] == 1 else 'NEGATIVE'
 
-    tmp = X.toarray()[0]
+    test_s = X.toarray()[0]
     # model weights from LogisticRegression
     coef = cls.coef_
     # wi*xi
-    wixi = [tmp[i]*coef[0][i] for i in range(len(tmp))]
+    wixi = [test_s[i]*coef[0][i] for i in range(len(test_s))]
     # argsort wi*xi
     reasons = np.argsort(wixi)
 
@@ -64,8 +63,8 @@ def output(request):
 
     prediction = "The prediction is: " +  prediction
     reason = "The reason is: your input contains words " + reason + \
-        ", which has a major impact on the prediction"
-        
+        ", which have a major impacts on the prediction"
+
     if 'unkunk' in reason:
         confusion = "Since the input sentence contains \
             a list of rare words {}, we are not confident to give this\
@@ -81,7 +80,7 @@ def output(request):
     c = make_pipeline(sent.count_vect, cls)
     explainer = LimeTextExplainer(class_names=['NEGATIVE','POSITIVE'])
     exp = explainer.explain_instance(rdata, c.predict_proba, num_features=len(rdata.split(' ')))
-    exp.save_to_file('test.html')
+    exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data
     return render(request,'home.html',\
@@ -122,9 +121,8 @@ def output2(request):
     c = make_pipeline(sent.count_vect, cls)
     explainer = LimeTextExplainer(class_names=['brand', 'female', 'male'])
     exp = explainer.explain_instance(data, c.predict_proba, num_features=6, top_labels=3)
-    exp.save_to_file('test.html')
+    exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data
     return render(request, 'home.html',
                   {'data': data, 'prediction': prediction, 'reason': reason})
-    
