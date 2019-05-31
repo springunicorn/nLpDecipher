@@ -16,8 +16,9 @@
     </head>
     <body>
         <img class= "topbanner" src="{% static 'decipher/computer.png' %}">
-        <div class="main">
+        <div class="trainButton">
         <button onclick="location.href='{% url 'train_model' %}'">Train NLP Model</button>
+        </div>
         <div class="progress">
         {% if progress is not None %}
         {{progress}}
@@ -25,25 +26,42 @@
         </div>
         <hr>
 
-        <form method="post" enctype="multipart/form-data" action="/output">
-        {% csrf_token %}
-            Input your sentence for sentiment classification:
-            <input type="text" name="inputsentence">
-        </form>
+        <div >
+        <span class="description">
+        Input your sentence for sentiment classification:
+        </span>
 
-        <form method="post" enctype="multipart/form-data" action="/output2">
-            {% csrf_token %}
-            Input your sentence for gender classification:
-            <input type="text" name="inputsentence2">
+        <span class="description">
+        Input your sentence for gender classification:
+        </span>
+        </div>
+        <br>
+
+        <div>
+        <form method="post" enctype="multipart/form-data" action="/output" class="inputForm" id="sentiment">
+        {% csrf_token %}
+            <textarea rows="5" cols="50" type="text" name="inputsentence"></textarea>
         </form>
+        <form method="post" enctype="multipart/form-data" action="/output2" class="inputForm" id="gender">
+            {% csrf_token %}
+            <textarea rows="5" cols="50" type="text" name="inputsentence2"></textarea>
+        </form>
+        </div>
+
+        <div>
+            <button type="submit" form="sentiment" value="Submit">Sentiment</button>
+            <button type="submit" form="gender" value="Submit">Gender</button>
+        </div>
 
         {% if data is not None or prediction is not None %}
         <br>
+        <div class="result">
         {{data}}
         <br>
         {{prediction}}
         <br>
         {{reason}}
+        </div>
         <div id="lime"></div>
         {% endif %}
 
@@ -51,8 +69,8 @@
         <br>
         {{confusion}}
         {% endif %}
+        <br>
         <img src="{% static 'decipher/sigmoid.png' %}" class="sigmoid">
-        </div>
         </body>
 
 </html>

@@ -1,14 +1,8 @@
 body{
-    color: red;
+    color: #3C6478;
     margin: 0;
     background-color: #DDDDDD;
-}
-
-.sigmoid{
-}
-
-.topbanner{
-    width:100%;
+    font-family: sans-serif;
 }
 
 button {
@@ -20,11 +14,54 @@ button {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  left: 10px;
+  margin-left: 140px;
+  margin-right: 140px;
+}
+.sigmoid{
 }
 
-.main{
-    /* background-image: url("art-artist-black-and-white-265047.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover; */
+.topbanner{
+    width:100%;
+}
+
+div{
+    text-align: center;
+}
+
+.inputForm{
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.description{
+    position: relative;
+    display: inline-block;
+    margin-left: 40px;
+    margin-right: 60px;
+    color: #3C6478;
+    font-size: 16px;
+    font-family: sans-serif;
+}
+
+.trainButton {
+    text-align: center;
+}
+
+.progress{
+    text-align: center;
+    color: #3C6478;
+    font-size: 18px;
+    font-family: sans-serif;
+    padding-top: 10px;
+}
+
+.result{
+    margin-bottom: 30px
+}
+
+form{
+    display: inline-block;
 }
