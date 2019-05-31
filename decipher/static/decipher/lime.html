@@ -37088,25 +37088,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_divLAV5Y8CUW58O7O0"></div>
+        <div class="lime top_div" id="top_div2JNI4DK7WZLKULK"></div>
         
         <script>
-        var top_div = d3.select('#top_divLAV5Y8CUW58O7O0').classed('lime top_div', true);
+        var top_div = d3.select('#top_div2JNI4DK7WZLKULK').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.8016352698063629, 0.1983647301936371]);
+            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.9980716293798877, 0.0019283706201123113]);
             
         
         var exp_div;
             var exp = new lime.Explanation(["NEGATIVE", "POSITIVE"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["how", -0.3696273655706857], ["are", -0.03226864780899553], ["you", 0.021874642158825557], ["old", 0.001973576931847605]], 1, exp_div);
+                exp.show([["but", -0.05548924834219467], ["the", -0.05386236243573941], ["good", 0.05318824056067254], ["wanted", -0.04532692991398124], ["to", -0.04078230192920573], ["wasn", -0.03768202076698658], ["understand", -0.037610551630302774], ["after", -0.0352087825928848], ["employee", -0.027450026301846547], ["tell", -0.027202773593419462]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_text([["how", 0, -0.3696273655706857], ["are", 8, -0.03226864780899553], ["you", 12, 0.021874642158825557], ["old", 4, 0.001973576931847605]], 1, "how old are you", raw_div, true);
+            exp.show_raw_text([["but", 112, -0.05548924834219467], ["the", 57, -0.05386236243573941], ["the", 116, -0.05386236243573941], ["good", 17, 0.05318824056067254], ["wanted", 68, -0.04532692991398124], ["to", 143, -0.04078230192920573], ["wasn", 75, -0.03768202076698658], ["understand", 95, -0.037610551630302774], ["after", 22, -0.0352087825928848], ["employee", 120, -0.027450026301846547], ["tell", 146, -0.027202773593419462]], 1, "came in for some good after a long day at work . some of the food i wanted wasn't ready, and i understand that, but the employee bianca unkunk to tell", raw_div, true);
             
         </script>
         </body></html>

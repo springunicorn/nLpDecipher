@@ -14,7 +14,6 @@ sent = None
 def train(request):
     global cls1, cls2, sent
     cls1, cls2, sent = sentiment.run_script()
-    sentiment.run_test(cls2, sent)
     progress = 'Training Done'
     return render(request,'home.html',{'progress':progress})
 
@@ -93,7 +92,7 @@ def output(request):
     from sklearn.pipeline import make_pipeline
     c = make_pipeline(sent.count_vect, cls2)
     explainer = LimeTextExplainer(class_names=['NEGATIVE','POSITIVE'])
-    exp = explainer.explain_instance(rdata, c.predict_proba, num_features=len(rdata.split(' ')))
+    exp = explainer.explain_instance(rdata, c.predict_proba, num_features=10)
     exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data

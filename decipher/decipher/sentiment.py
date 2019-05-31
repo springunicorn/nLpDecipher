@@ -27,14 +27,11 @@ def read_files(tarfname):
     tar = tarfile.open(tarfname, "r:gz")
     trainname = "train.tsv"
     devname = "dev.tsv"
-    testname = "test.tsv"
     for member in tar.getmembers():
         if 'train.tsv' in member.name:
             trainname = member.name
         elif 'dev.tsv' in member.name:
             devname = member.name
-        elif 'test.tsv' in member.name:
-            testname = member.name
             
             
     class Data: pass
@@ -46,10 +43,6 @@ def read_files(tarfname):
     print("-- dev data")
     sentiment.dev_data, sentiment.dev_labels = read_tsv(tar, devname)
     print(len(sentiment.dev_data))
-
-    print("-- test data")
-    sentiment.test_data, sentiment.test_labels = read_tsv(tar, testname)
-    print(len(sentiment.test_data))
     
     print("-- transforming data and labels")
 
@@ -70,7 +63,6 @@ def read_files(tarfname):
     # print(le_name_mapping)
     sentiment.trainy = sentiment.le.transform(sentiment.train_labels)
     sentiment.devy = sentiment.le.transform(sentiment.dev_labels)
-    sentiment.testy = sentiment.le.transform(sentiment.test_labels)
     tar.close()
     return sentiment
 
@@ -100,8 +92,6 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
         sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize)
     
     sentiment.trainX = sentiment.count_vect.fit_transform(init_vocab(sentiment.train_data))
-    # sentiment.devX = sentiment.count_vect.transform(sentiment.dev_data)
-    sentiment.testX = sentiment.count_vect.transform(sentiment.test_data)
 
     return sentiment
 
@@ -401,14 +391,3 @@ def graph(cls,test_s,X,vocab,fname,title):
     plt.subplots_adjust(bottom=0.3)
     plt.savefig(fname)
     plt.close()
-
-def run_test(cls, sentiment):
-    evaluate(sentiment.testX, sentiment.testy, cls)
-
-
-def evaluate(X, yt, cls, name='data'):
-    """Evaluated a classifier on the given labeled data using accuracy."""
-    from sklearn import metrics
-    yp = cls.predict(X)
-    acc = metrics.accuracy_score(yt, yp)
-    print("  Accuracy on %s  is: %s" % (name, acc))
