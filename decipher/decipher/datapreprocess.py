@@ -9,6 +9,9 @@ df = df.loc[df['gender:confidence']==1]
 df = df[['gender', 'text']]
 df.head(2)
 #%%
+df = df[df['gender'] != 'unknown']
+df.head(2)
+#%%
 import re
 def cleaning(s):
     s = str(s)
@@ -36,6 +39,7 @@ df.head(2)
 import numpy as np
 train, validate, test = np.split(df.sample(frac=1), [int(.6*len(df)), int(.8*len(df))])
 train
+
 #%%
 train.to_csv('./sentiment/train.tsv', sep='\t', index=False,
           header=False, encoding='utf-8')

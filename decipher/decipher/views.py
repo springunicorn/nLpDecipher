@@ -123,6 +123,7 @@ def output2(request):
     exp = explainer.explain_instance(data, c.predict_proba, num_features=6, top_labels=3)
     exp.save_to_file('static/decipher/lime.html')
 
+    print(cls.classes_)
     data = "Your input sentence is: " + data
     return render(request, 'home.html',
                   {'data': data, 'prediction': prediction, 'reason': reason})

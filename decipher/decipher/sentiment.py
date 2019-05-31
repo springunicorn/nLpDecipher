@@ -1,4 +1,5 @@
 #!/bin/python
+from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 import string
 import numpy as np
@@ -66,12 +67,31 @@ def read_files(tarfname):
     sentiment.le = preprocessing.LabelEncoder()
     sentiment.le.fit(sentiment.train_labels)
     sentiment.target_labels = sentiment.le.classes_
-    # le_name_mapping = dict(zip(sentiment.le.classes_, sentiment.le.transform(sentiment.le.classes_)))
-    # print(le_name_mapping)
+    le_name_mapping = dict(zip(sentiment.le.classes_, sentiment.le.transform(sentiment.le.classes_)))
+    print(le_name_mapping)
     sentiment.trainy = sentiment.le.transform(sentiment.train_labels)
     sentiment.devy = sentiment.le.transform(sentiment.dev_labels)
     sentiment.testy = sentiment.le.transform(sentiment.test_labels)
     tar.close()
+
+
+    # from nltk import word_tokenize
+    # from sklearn.model_selection import GridSearchCV
+    # from sklearn.linear_model import LogisticRegression
+    # from sklearn.pipeline import Pipeline
+    # pipeline = Pipeline([
+    #     ('tfidf', TfidfVectorizer(tokenizer=word_tokenize)),
+    #     ('clf', LogisticRegression(random_state=0, solver='lbfgs', max_iter=10000))])
+    # parameters = {
+    #     'tfidf__ngram_range':[(1, 2), (1, 3)],
+    #     'tfidf__binary':[True, False],
+    #     'tfidf__sublinear_tf':[True, False],
+    #     'tfidf__stop_words':['english', None],
+    #     'clf__C':[0.01, 0.1, 1, 10, 100, 1000]
+    # }
+    # grid_search_tune = GridSearchCV(pipeline, parameters, cv=5, n_jobs=-1, verbose=3)
+    # grid_search_tune.fit(sentiment.train_data, sentiment.trainy)
+    # print(grid_search_tune.best_params_)
     return sentiment
 
 def countvectorizer_feat(sentiment):
@@ -95,11 +115,12 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
     #         return [self.wnl.lemmatize(t) for t in nltk.word_tokenize(articles)]
 
     if max_feat != 0:
-        sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, max_features=max_feat)
+        sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, binary=True, max_features=max_feat)
     else:
-        sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize)
-    
-    sentiment.trainX = sentiment.count_vect.fit_transform(init_vocab(sentiment.train_data))
+        sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, binary=True)
+        #sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,2), stop_words='english')
+    sentiment.trainX = sentiment.count_vect.fit_transform(
+        init_vocab(sentiment.train_data))
     # sentiment.devX = sentiment.count_vect.transform(sentiment.dev_data)
     sentiment.testX = sentiment.count_vect.transform(sentiment.test_data)
 
@@ -371,16 +392,9 @@ def run_script():
     tarfname = "decipher/data/sentiment.tar.gz"
 
     sentiment = read_files(tarfname)
-    cls = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1000)
+    cls = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1)
     return cls, sentiment
 
 def run_test(cls, sentiment):
-    evaluate(sentiment.testX, sentiment.testy, cls)
-
-
-def evaluate(X, yt, cls, name='data'):
-    """Evaluated a classifier on the given labeled data using accuracy."""
-    from sklearn import metrics
-    yp = cls.predict(X)
-    acc = metrics.accuracy_score(yt, yp)
-    print("  Accuracy on %s  is: %s" % (name, acc))
+    from . import classify
+    classify.evaluate(sentiment.testX, sentiment.testy, cls)
