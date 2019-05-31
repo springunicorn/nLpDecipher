@@ -9,16 +9,24 @@ import random
 
 cls1 = None
 cls2 = None
+cls3 = None
+cls4 = None
 sent = None
+sent_gender = None
+
 
 def train(request):
-    global cls1, cls2, sent
-    cls1, cls2, sent = sentiment.run_script()
+    global cls1, cls2, cls3, cls4, sent, sent_gender
+    cls1, cls2, sent = sentiment.run_script("decipher/data/sentiment.tar.gz")
+    cls3, cls4, sent_gender = sentiment.run_script(
+        "decipher/data/gender.tar.gz", c=1)
     progress = 'Training Done'
-    return render(request,'home.html',{'progress':progress})
+    return render(request, 'home.html', {'progress': progress})
+
 
 def button(request):
-    return render(request,'home.html')
+    return render(request, 'home.html')
+
 
 def output(request):
     global cls1, cls2, sent
@@ -51,7 +59,7 @@ def output(request):
     test_s = X.toarray()[0]
 
     # L1-norm weights
-    sentiment.graph(cls1,test_s,X,vocab,'l1.jpg','L1-norm weights')
+    sentiment.graph(cls1, test_s, X, vocab, 'l1.jpg', 'L1-norm weights')
 
     # model weights from LogisticRegression
     coef = cls2.coef_
@@ -61,7 +69,7 @@ def output(request):
     reasons = np.argsort(wixi)
 
     # L2-norm weights
-    sentiment.graph(cls2,test_s,X,vocab,'l2.jpg','L2-norm weights')
+    sentiment.graph(cls2, test_s, X, vocab, 'l2.jpg', 'L2-norm weights')
 
     if prediction == 'POSITIVE':
         if wixi[reasons[-2]] != 0:
@@ -74,7 +82,7 @@ def output(request):
         else:
             reason = vocab[reasons[0]]
 
-    prediction = "The prediction is: " +  prediction
+    prediction = "The prediction is: " + prediction
     reason = "The reason is: your input contains words " + reason + \
         ", which have a major impacts on the prediction"
 
@@ -91,49 +99,84 @@ def output(request):
     '''
     from sklearn.pipeline import make_pipeline
     c = make_pipeline(sent.count_vect, cls2)
-    explainer = LimeTextExplainer(class_names=['NEGATIVE','POSITIVE'])
+    explainer = LimeTextExplainer(class_names=['NEGATIVE', 'POSITIVE'])
     exp = explainer.explain_instance(rdata, c.predict_proba, num_features=10)
     exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data
-    return render(request,'home.html',\
+    return render(request, 'home.html',
                   {'data': data, 'prediction': prediction, 'reason': reason, 'confusion': confusion})
 
 
 def output2(request):
+    global cls3, cls4, sent_gender
+
+    twd = nltk.tokenize.treebank.TreebankWordDetokenizer()
     # get the input sentence from input box
     data = request.POST.get('inputsentence2', False)
+    # deal with rare words
+    tmp_data = nltk.word_tokenize(data)
+    rare_words = []
+    tmp = []
+    for x in tmp_data:
+        if x not in sent_gender.count_vect.vocabulary_:
+            choice = random.random()
+            if choice < 0.5:
+                tmp.append('unkunk')
+                rare_words.append(x)
+            else:
+                tmp.append(x)
+        else:
+            tmp.append(x)
+    rdata = twd.detokenize(tmp)
 
-    global cls, sent
     # a map from feature indices to feature value(n-grams feature)
-    vocab = dict(map(reversed, sent.count_vect.vocabulary_.items()))
+    vocab = dict(map(reversed, sent_gender.count_vect.vocabulary_.items()))
     # Tfidf of input sentence
-    X = sent.count_vect.transform([data])
+    X = sent_gender.count_vect.transform([rdata])
 
-    predidx = cls.predict(X)[0]
+    predidx = cls4.predict(X)[0]
     classmap = ['brand', 'female', 'male']
     prediction = classmap[predidx]
 
     tmp = X.toarray()[0]
-    # model weights from LogisticRegression
-    coef = cls.coef_
-    # argsort wi*xi
-    reasons = np.argsort([tmp[i]*coef[0][i] for i in range(len(tmp))])
 
-    reason = vocab[reasons[-1]] + ' and ' + vocab[reasons[-2]]
+    sentiment.graph(cls3, tmp, X, vocab, 'gender-l1.jpg', 'L1-norm weights')
+
+    # model weights from LogisticRegression
+    coef = cls4.coef_
+    # wi*xi
+    wixi = [tmp[i]*coef[predidx][i] for i in range(len(tmp))]
+    # argsort wi*xi
+    reasons = np.argsort(wixi)
+
+    sentiment.graph(cls4, tmp, X, vocab, 'gender-l2.jpg', 'L2-norm weights')
+
+    if wixi[reasons[-2]] != 0:
+        reason = vocab[reasons[-1]] + ' and ' + vocab[reasons[-2]]
+    else:
+        reason = vocab[reasons[-1]]
 
     prediction = "The prediction is: " + prediction
     reason = "The reason is: your input contains words " + reason + \
         ", which has a major impact on the prediction"
+
+    if 'unkunk' in reason:
+        confusion = "Since the input sentence contains \
+            a list of rare words {}, we are not confident to give this\
+                prediction".format(', '.join(rare_words))
+    else:
+        confusion = None
 
     '''
     LIME usage, generate 'test.html' to shwo the resulting graph
     Need to combine the image to our website
     '''
     from sklearn.pipeline import make_pipeline
-    c = make_pipeline(sent.count_vect, cls)
+    c = make_pipeline(sent_gender.count_vect, cls4)
     explainer = LimeTextExplainer(class_names=['brand', 'female', 'male'])
-    exp = explainer.explain_instance(data, c.predict_proba, num_features=6, top_labels=3)
+    exp = explainer.explain_instance(
+        rdata, c.predict_proba, num_features=10, top_labels=3)
     exp.save_to_file('static/decipher/lime.html')
 
     data = "Your input sentence is: " + data
