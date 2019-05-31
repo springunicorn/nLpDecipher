@@ -1,12 +1,12 @@
 #!/bin/python
 
-def train_classifier(X, y, c):
+def train_classifier(X, y, c, l, s, iter):
 	"""Train a classifier using the given training data.
 
 	Trains logistic regression on the input data with default parameters.
 	"""
 	from sklearn.linear_model import LogisticRegression
-	cls = LogisticRegression(random_state=0, solver='lbfgs', max_iter=10000, C=c)
+	cls = LogisticRegression(n_jobs=1, random_state=0, solver=s, max_iter=iter, C=c, penalty=l)
 	cls.fit(X, y)
 	return cls
 

@@ -28,14 +28,11 @@ def read_files(tarfname):
     tar = tarfile.open(tarfname, "r:gz")
     trainname = "train.tsv"
     devname = "dev.tsv"
-    testname = "test.tsv"
     for member in tar.getmembers():
         if 'train.tsv' in member.name:
             trainname = member.name
         elif 'dev.tsv' in member.name:
             devname = member.name
-        elif 'test.tsv' in member.name:
-            testname = member.name
             
             
     class Data: pass
@@ -47,10 +44,6 @@ def read_files(tarfname):
     print("-- dev data")
     sentiment.dev_data, sentiment.dev_labels = read_tsv(tar, devname)
     print(len(sentiment.dev_data))
-
-    print("-- test data")
-    sentiment.test_data, sentiment.test_labels = read_tsv(tar, testname)
-    print(len(sentiment.test_data))
     
     print("-- transforming data and labels")
 
@@ -71,7 +64,6 @@ def read_files(tarfname):
     print(le_name_mapping)
     sentiment.trainy = sentiment.le.transform(sentiment.train_labels)
     sentiment.devy = sentiment.le.transform(sentiment.dev_labels)
-    sentiment.testy = sentiment.le.transform(sentiment.test_labels)
     tar.close()
 
 
@@ -117,12 +109,9 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
     if max_feat != 0:
         sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, binary=True, max_features=max_feat)
     else:
-        sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, binary=True)
-        #sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,2), stop_words='english')
-    sentiment.trainX = sentiment.count_vect.fit_transform(
-        init_vocab(sentiment.train_data))
-    # sentiment.devX = sentiment.count_vect.transform(sentiment.dev_data)
-    sentiment.testX = sentiment.count_vect.transform(sentiment.test_data)
+        sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize)
+    
+    sentiment.trainX = sentiment.count_vect.fit_transform(init_vocab(sentiment.train_data))
 
     return sentiment
 
@@ -386,15 +375,37 @@ def semi_supervise(sentiment, unlabeled, iter, num_conf):
 #     # write_gold_kaggle_file("data/sentiment-unlabeled.tsv", "data/sentiment-gold.csv")
 
 
-def run_script():
+def run_script(tarfname,c=1000):
     from . import classify
-
-    tarfname = "decipher/data/sentiment.tar.gz"
 
     sentiment = read_files(tarfname)
-    cls = classify.train_classifier(sentiment.trainX, sentiment.trainy, 1)
-    return cls, sentiment
 
-def run_test(cls, sentiment):
-    from . import classify
-    classify.evaluate(sentiment.testX, sentiment.testy, cls)
+    cls1 = classify.train_classifier(sentiment.trainX, sentiment.trainy, c, 'l1', 'liblinear', 10000)
+    cls2 = classify.train_classifier(sentiment.trainX, sentiment.trainy, c, 'l2', 'lbfgs', 10000)
+    return cls1, cls2, sentiment
+
+def graph(cls,test_s,X,vocab,fname,title):
+    '''
+    L1/L2 norm wi*xi graph
+    '''
+    import matplotlib.pyplot as plt
+    L_wts = []
+    for i,d in enumerate(cls.coef_[0]):
+        if d*test_s[i] != 0:
+            L_wts.append((vocab[i],d*test_s[i]))
+    if cls.predict(X)[0] == 0:
+        sort_L_wts = sorted(L_wts,key=lambda x:x[1])[:8]
+    else:
+        sort_L_wts = sorted(L_wts,key=lambda x:x[1],reverse=True)[:8]
+    cols = []
+    for (_,x) in sort_L_wts:
+        cols.append('b' if x >= 0 else 'r')
+    plt.bar([i for (i,x) in sort_L_wts],[x for (i,x) in sort_L_wts],\
+        color=cols)
+    plt.xticks(rotation=45)
+    plt.xlabel('impactful feature words')
+    plt.ylabel('contribution of the word when predicting')
+    plt.title(title)
+    plt.subplots_adjust(bottom=0.3)
+    plt.savefig(fname)
+    plt.close()

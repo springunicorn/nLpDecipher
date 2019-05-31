@@ -37088,31 +37088,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_div839W21AK1KOLZP7"></div>
+        <div class="lime top_div" id="top_divISVTRIMWCL2FS2H"></div>
         
         <script>
-        var top_div = d3.select('#top_div839W21AK1KOLZP7').classed('lime top_div', true);
+        var top_div = d3.select('#top_divISVTRIMWCL2FS2H').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["brand", "female", "male"], [0.16583828529253208, 0.3378277525777712, 0.4963339621296966]);
+            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.8146826608873221, 0.18531733911267784]);
             
         
         var exp_div;
-            var exp = new lime.Explanation(["brand", "female", "male"]);
+            var exp = new lime.Explanation(["NEGATIVE", "POSITIVE"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["a", 0.048657450671058394], ["This", -0.047431622784151105], ["and", -0.039438987965333155], ["example", -0.02808292618219915], ["prime", -0.02395801539745829], ["gaslighting", 0.02282300106862488]], 2, exp_div);
-                
-                exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["This", 0.05181860228570111], ["and", 0.049788201470473734], ["of", -0.029647376527154774], ["a", -0.027960476894839277], ["is", 0.027085469721735717], ["gaslighting", -0.006585760336024937]], 1, exp_div);
-                
-                exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["is", -0.03133518940974437], ["prime", 0.024819450804095373], ["of", 0.024394568570329442], ["example", 0.02201291278843177], ["a", -0.020336748868475456], ["gaslighting", -0.016183056411554597]], 0, exp_div);
+                exp.show([["hello", -0.14339724645431984], ["unkunk", 0.03232799304919539]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_text([["a", 39, 0.048657450671058394], ["This", 0, -0.047431622784151105], ["and", 16, -0.039438987965333155], ["and", 35, -0.039438987965333155], ["example", 47, -0.02808292618219915], ["prime", 41, -0.02395801539745829], ["gaslighting", 58, 0.02282300106862488]], 2, "This is totally and utterly absurd and a prime example of gaslighting.", raw_div, true);
+            exp.show_raw_text([["hello", 0, -0.14339724645431984], ["unkunk", 6, 0.03232799304919539]], 1, "hello unkunk", raw_div, true);
             
         </script>
         </body></html>
