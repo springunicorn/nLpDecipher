@@ -63,14 +63,19 @@
         {{reason}}
         </div>
         <div id="lime"></div>
+        <div id="norm">
+        <img src="{% static 'decipher/l1.jpg' %}" class="lnorm">
+        <img src="{% static 'decipher/l2.jpg' %}" class="lnorm">
+        </div>
         {% endif %}
 
         {% if confusion is not None %}
         <br>
         {{confusion}}
         {% endif %}
-        <br>
+        <div>
         <img src="{% static 'decipher/sigmoid.png' %}" class="sigmoid">
+        </div>
         </body>
 
 </html>

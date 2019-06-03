@@ -59,7 +59,7 @@ def output(request):
     test_s = X.toarray()[0]
 
     # L1-norm weights
-    sentiment.graph(cls1, test_s, X, vocab, 'l1.jpg', 'L1-norm weights')
+    sentiment.graph(cls1, test_s, X, vocab, 'static/decipher/l1.jpg', 'L1-norm weights')
 
     # model weights from LogisticRegression
     coef = cls2.coef_
@@ -69,7 +69,7 @@ def output(request):
     reasons = np.argsort(wixi)
 
     # L2-norm weights
-    sentiment.graph(cls2, test_s, X, vocab, 'l2.jpg', 'L2-norm weights')
+    sentiment.graph(cls2, test_s, X, vocab, 'static/decipher/l2.jpg', 'L2-norm weights')
 
     if prediction == 'POSITIVE':
         if wixi[reasons[-2]] != 0:
@@ -113,7 +113,7 @@ def output2(request):
 
     twd = nltk.tokenize.treebank.TreebankWordDetokenizer()
     # get the input sentence from input box
-    data = request.POST.get('inputsentence2', False)
+    data = request.POST.get('inputsentence2', False).lower()
     # deal with rare words
     tmp_data = nltk.word_tokenize(data)
     rare_words = []
@@ -141,7 +141,7 @@ def output2(request):
 
     tmp = X.toarray()[0]
 
-    sentiment.graph(cls3, tmp, X, vocab, 'gender-l1.jpg', 'L1-norm weights')
+    sentiment.gender_graph(cls3, tmp, X, vocab, 'static/decipher/l1.jpg', 'L1-norm weights')
 
     # model weights from LogisticRegression
     coef = cls4.coef_
@@ -150,7 +150,7 @@ def output2(request):
     # argsort wi*xi
     reasons = np.argsort(wixi)
 
-    sentiment.graph(cls4, tmp, X, vocab, 'gender-l2.jpg', 'L2-norm weights')
+    sentiment.gender_graph(cls4, tmp, X, vocab, 'static/decipher/l2.jpg', 'L2-norm weights')
 
     if wixi[reasons[-2]] != 0:
         reason = vocab[reasons[-1]] + ' and ' + vocab[reasons[-2]]

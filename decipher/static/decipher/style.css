@@ -62,6 +62,13 @@ div{
     margin-bottom: 30px
 }
 
+.lnorm{
+    margin-left: 40px;
+    margin-right: 40px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 form{
     display: inline-block;
 }

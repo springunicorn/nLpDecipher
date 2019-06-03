@@ -33,8 +33,8 @@ def read_files(tarfname):
             trainname = member.name
         elif 'dev.tsv' in member.name:
             devname = member.name
-            
-            
+
+
     class Data: pass
     sentiment = Data()
     print("-- train data")
@@ -44,7 +44,7 @@ def read_files(tarfname):
     print("-- dev data")
     sentiment.dev_data, sentiment.dev_labels = read_tsv(tar, devname)
     print(len(sentiment.dev_data))
-    
+
     print("-- transforming data and labels")
 
     # tokens = []
@@ -99,7 +99,7 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
     from sklearn.feature_extraction.text import TfidfVectorizer
     import nltk
 
-    # from nltk.stem import WordNetLemmatizer 
+    # from nltk.stem import WordNetLemmatizer
     # class LemmaTokenizer(object):
     #     def __init__(self):
     #         self.wnl = WordNetLemmatizer()
@@ -110,7 +110,7 @@ def tfidfvectorizer_feat(sentiment, max_feat=0):
         sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize, binary=True, max_features=max_feat)
     else:
         sentiment.count_vect = TfidfVectorizer(sublinear_tf=True, ngram_range=(1,3), tokenizer=nltk.word_tokenize)
-    
+
     sentiment.trainX = sentiment.count_vect.fit_transform(init_vocab(sentiment.train_data))
 
     return sentiment
@@ -142,20 +142,20 @@ def read_unlabeled(tarfname, sentiment):
     class Data: pass
     unlabeled = Data()
     unlabeled.data = []
-    
+
     unlabeledname = "unlabeled.tsv"
     for member in tar.getmembers():
         if 'unlabeled.tsv' in member.name:
             unlabeledname = member.name
-            
+
     print(unlabeledname)
     tf = tar.extractfile(unlabeledname)
     for line in tf:
         line = line.decode("utf-8")
         text = line.strip()
         unlabeled.data.append(text)
-        
-            
+
+
     unlabeled.X = sentiment.count_vect.transform(unlabeled.data)
     print(unlabeled.X.shape)
     tar.close()
@@ -397,6 +397,30 @@ def graph(cls,test_s,X,vocab,fname,title):
         sort_L_wts = sorted(L_wts,key=lambda x:x[1])[:8]
     else:
         sort_L_wts = sorted(L_wts,key=lambda x:x[1],reverse=True)[:8]
+    cols = []
+    for (_,x) in sort_L_wts:
+        cols.append('b' if x >= 0 else 'r')
+    plt.bar([i for (i,x) in sort_L_wts],[x for (i,x) in sort_L_wts],\
+        color=cols)
+    plt.xticks(rotation=45)
+    plt.xlabel('impactful feature words')
+    plt.ylabel('contribution of the word when predicting')
+    plt.title(title)
+    plt.subplots_adjust(bottom=0.3)
+    plt.savefig(fname)
+    plt.close()
+
+def gender_graph(cls,test_s,X,vocab,fname,title):
+    '''
+    L1/L2 norm wi*xi graph
+    '''
+    import matplotlib.pyplot as plt
+    L_wts = []
+    idx = cls.predict(X)[0]
+    for i,d in enumerate(cls.coef_[idx]):
+        if d*test_s[i] != 0:
+            L_wts.append((vocab[i],d*test_s[i]))
+    sort_L_wts = sorted(L_wts,key=lambda x:x[1],reverse=True)[:8]
     cols = []
     for (_,x) in sort_L_wts:
         cols.append('b' if x >= 0 else 'r')
