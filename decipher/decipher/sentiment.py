@@ -5,6 +5,7 @@ import string
 import numpy as np
 from collections import defaultdict
 import nltk
+import random
 
 vocab = defaultdict(int)
 
@@ -123,7 +124,12 @@ def init_vocab(data):
         tmp = nltk.word_tokenize(s)
         new_tmp = []
         for t in tmp:
-            n = t if vocab[t] > 1 else 'UNKUNK'
+            if vocab[t] > 1:
+                n = t
+            else:
+                choice = random.random()
+                if choice < 0.5:
+                    n = 'UNKUNK'
             new_tmp.append(n)
         new_data.append(twd.detokenize(new_tmp))
     return new_data
