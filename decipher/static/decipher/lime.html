@@ -37088,31 +37088,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_divDSHXNQDOJAESUAO"></div>
+        <div class="lime top_div" id="top_divP0TK5Q6SIQFL6MH"></div>
         
         <script>
-        var top_div = d3.select('#top_divDSHXNQDOJAESUAO').classed('lime top_div', true);
+        var top_div = d3.select('#top_divP0TK5Q6SIQFL6MH').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["brand", "female", "male"], [0.4705019692470134, 0.2949224908023802, 0.23457553995060632]);
+            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.020881900921158048, 0.979118099078842]);
             
         
         var exp_div;
-            var exp = new lime.Explanation(["brand", "female", "male"]);
+            var exp = new lime.Explanation(["NEGATIVE", "POSITIVE"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["at", 0.06524936958347959], ["new", 0.027795615375712086], ["deals", 0.025120404244092825], ["pro", 0.017339839641932087], ["and", -0.016331410543986274], ["the", -0.015396068486033993], ["great", -0.013957648903785154], ["weekend", 0.009873392025598372], ["marathon", 0.006267576950616817], ["expo", 0.005120338152943023]], 0, exp_div);
-                
-                exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["deals", -0.03488856139083569], ["this", 0.027297689613585044], ["and", 0.02627052324873902], ["new", -0.02331139757416414], ["pro", -0.02306174854665763], ["at", -0.022128104374336526], ["weekend", 0.0066384270393592916], ["bass", -0.004960113824129929], ["marathon", -0.003678661691805229], ["the", 0.0035110087818555893]], 1, exp_div);
-                
-                exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["at", -0.04369738807197129], ["this", -0.026375332170981824], ["weekend", -0.01748514232364025], ["great", 0.014533336684285825], ["the", 0.011330232432091886], ["and", -0.010997080175444776], ["deals", 0.009146261504212303], ["items", 0.007175638441311798], ["new", -0.005113383588681014], ["pro", 0.0046282374903779434]], 2, exp_div);
+                exp.show([["best", 0.22798806304574776], ["good", 0.0852443340818775], ["always", 0.0790371672858211], ["over", -0.07661811146293938], ["different", 0.07632821255741333], ["unkunk", 0.039599937347684744], ["old", -0.033250938994655636], ["one", -0.03001131078814165], ["all", 0.024978876417641797], ["food", -0.024108933965281458]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_text([["at", 26, 0.06524936958347959], ["new", 16, 0.027795615375712086], ["deals", 6, 0.025120404244092825], ["pro", 38, 0.017339839641932087], ["and", 12, -0.016331410543986274], ["the", 29, -0.015396068486033993], ["great", 0, -0.013957648903785154], ["weekend", 61, 0.009873392025598372], ["marathon", 42, 0.006267576950616817], ["expo", 51, 0.005120338152943023]], 0, "great deals and new items at the bass pro marathon expo this weekend", raw_div, true);
+            exp.show_raw_text([["best", 8, 0.22798806304574776], ["good", 141, 0.0852443340818775], ["always", 134, 0.0790371672858211], ["over", 71, -0.07661811146293938], ["over", 105, -0.07661811146293938], ["different", 80, 0.07632821255741333], ["unkunk", 23, 0.039599937347684744], ["old", 53, -0.033250938994655636], ["one", 37, -0.03001131078814165], ["all", 0, 0.024978876417641797], ["all", 30, 0.024978876417641797], ["all", 101, 0.024978876417641797], ["food", 126, -0.024108933965281458]], 1, "all the best wisconsin unkunk all in one place . the old fashioned has over 150 different beers from all over wisconsin . the food is always good.", raw_div, true);
             
         </script>
         </body></html>
