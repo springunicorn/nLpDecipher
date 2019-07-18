@@ -1,6 +1,7 @@
 To run the website, first install Django and LIME.
 
 > pip install Django
+
 > pip install lime
 
 Refer to the following sites for full installation instructions.
